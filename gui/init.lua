@@ -1,8 +1,5 @@
 -- gui/init.lua
 
--- installs gui sys
--- loads components
-
 local Tabs = require(script.components.tabs)
 local Buttons = require(script.components.buttons)
 local Theme = require(script.components.theme)
@@ -34,7 +31,39 @@ function GuiService:Create()
     stroke.Thickness = 1.2
     stroke.Parent = frame
 
-    Tabs:Create(frame)
+    -- Define your tab names
+    local tabNames = {"Exploit", "Settings", "Render", "World", "Misc"}
+
+    -- Create container for tab content frames
+    local contentContainer = Instance.new("Frame")
+    contentContainer.Size = UDim2.new(1, -20, 1, -100)
+    contentContainer.Position = UDim2.new(0, 10, 0, 90)
+    contentContainer.BackgroundTransparency = 1
+    contentContainer.Parent = frame
+
+    -- Create one content frame per tab (empty for now)
+    local tabContents = {}
+    for _, tabName in ipairs(tabNames) do
+        local tabFrame = Instance.new("Frame")
+        tabFrame.Size = UDim2.new(1, 0, 1, 0)
+        tabFrame.BackgroundTransparency = 1
+        tabFrame.Visible = false
+        tabFrame.Parent = contentContainer
+        tabContents[tabName] = tabFrame
+    end
+
+    -- Show first tab content initially
+    tabContents[tabNames[1]].Visible = true
+
+    -- Callback when tab changes
+    local function onTabChanged(selectedTab)
+        for tabName, tabFrame in pairs(tabContents) do
+            tabFrame.Visible = (tabName == selectedTab)
+        end
+    end
+
+    -- Create tabs bar with names and callback
+    Tabs:Create(frame, tabNames, onTabChanged)
 
     return screenGui
 end
