@@ -12,7 +12,6 @@ local files = {
     ["gui/components/tabs"] = "gui/components/tabs.lua",
     ["gui/components/buttons"] = "gui/components/buttons.lua",
     ["gui/components/theme"] = "gui/components/theme.lua",
-    ["gui/components/keybinds"] = "gui/components/keybinds.lua",
     ["modules/init"] = "modules/init.lua",
     ["modules/combat"] = "modules/combat.lua",
     ["modules/render"] = "modules/render.lua",
@@ -32,24 +31,15 @@ local env = {}
 
 -- Fake require system
 env.require = function(path)
-    local moduleFunc = modules[path]
-    if not moduleFunc then error("Module not found: " .. path) end
-    -- Cache the result after first run
-    if type(moduleFunc) == "function" then
-        local result = moduleFunc()
-        modules[path] = result
-        return result
-    else
-        return moduleFunc
-    end
+    local chunk = modules[path]
+    if not chunk then error("Module not found: " .. path) end
+    return chunk()
 end
 
--- Copy all global functions and variables into our environment
-for k, v in pairs(getfenv() or _G) do
-    env[k] = v
-end
+-- Propagate global functions
+for k, v in pairs(getfenv()) do env[k] = v end
 
--- Load all modules into virtual memory environment
+-- Load modules into virtual memory
 for id, urlPath in pairs(files) do
     local success, result = pcall(function()
         local source = game:HttpGet(baseUrl .. urlPath)
@@ -62,11 +52,6 @@ for id, urlPath in pairs(files) do
     end
 end
 
--- Initialize the GUI
+-- Run GUI init and create it
 local guiService = env.require("gui/init")
-local screenGui = guiService:Create()
-
--- Parent the GUI to CoreGui if not already parented (safety check)
-if screenGui and not screenGui.Parent then
-    screenGui.Parent = game:GetService("CoreGui")
-end
+guiService:Create()
