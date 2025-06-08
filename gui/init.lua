@@ -1,6 +1,6 @@
-local Theme = require("gui/components/theme.lua")
-local Tabs = require("gui/components/tabs.lua")
-local Buttons = require("gui/components/buttons.lua")
+local Theme = require("gui/components/theme")
+local Tabs = require("gui/components/tabs")
+local Buttons = require("gui/components/buttons")
 -- optional: local Keybinds = require("gui/components/keybinds") -- if used
 
 local GuiService = {}
