@@ -1,7 +1,7 @@
 local Theme = require("gui/components/theme")
 local Tabs = require("gui/components/tabs")
 local Buttons = require("gui/components/buttons")
-local Keybinds = require("gui/components/keybinds")
+-- optional: local Keybinds = require("gui/components/keybinds") -- if used
 
 local GuiService = {}
 
@@ -9,19 +9,21 @@ function GuiService:Create()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "VisualWaveUI"
     screenGui.ResetOnSpawn = false
-    screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    screenGui.Parent = game:GetService("CoreGui") -- or PlayerGui if you prefer
 
-    -- Set up tab buttons, toggles, etc
+    -- Main background frame
     local mainFrame = Instance.new("Frame")
     mainFrame.Size = UDim2.new(0, 400, 0, 300)
     mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
     mainFrame.BackgroundColor3 = Theme.Frame
     mainFrame.Parent = screenGui
 
+    -- Tabs
     local tabs = Tabs.Create(mainFrame, {"Combat", "Render", "World", "Misc"}, function(tab)
         print("Switched to tab:", tab)
     end)
 
+    -- Fly Toggle
     local toggle1 = Buttons.CreateToggle(mainFrame, "Fly", "F", false, function(state)
         print("Fly toggled:", state)
     end)
