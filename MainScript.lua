@@ -1,73 +1,57 @@
--- MainScript.lua for VisualWave
--- Dynamically loads all components and builds the GUI
+-- VisualWave MainScript (Loadstring-compatible)
+-- Dynamically loads all modules and creates a virtual require system
 
-local function import(path)
+if not isfile or not loadstring or not game or not game:HttpGet then
+    warn("Unsupported executor or environment")
+    return
+end
+
+local baseUrl = "https://raw.githubusercontent.com/BeefReal/VisualWave-V3/main/"
+local files = {
+    ["gui/init"] = "gui/init.lua",
+    ["gui/components/tabs"] = "gui/components/tabs.lua",
+    ["gui/components/buttons"] = "gui/components/buttons.lua",
+    ["gui/components/theme"] = "gui/components/theme.lua",
+    ["modules/init"] = "modules/init.lua",
+    ["modules/combat"] = "modules/combat.lua",
+    ["modules/render"] = "modules/render.lua",
+    ["modules/world"] = "modules/world.lua",
+    ["modules/misc"] = "modules/misc.lua",
+    ["utils/entity"] = "utils/entity.lua",
+    ["utils/input"] = "utils/input.lua",
+    ["utils/drawing"] = "utils/drawing.lua",
+    ["utils/settings"] = "utils/settings.lua",
+    ["themes/default"] = "themes/default.lua",
+    ["themes/vaporwave"] = "themes/vaporwave.lua",
+    ["themes/dark"] = "themes/dark.lua",
+}
+
+local modules = {}
+local env = {}
+
+-- Fake require system
+env.require = function(path)
+    local chunk = modules[path]
+    if not chunk then error("Module not found: " .. path) end
+    return chunk()
+end
+
+-- Propagate global functions
+for k, v in pairs(getfenv()) do env[k] = v end
+
+-- Load modules into virtual memory
+for id, urlPath in pairs(files) do
     local success, result = pcall(function()
-        return loadstring(game:HttpGet("https://raw.githubusercontent.com/BeefReal/VisualWave-V3/main/" .. path))()
+        local source = game:HttpGet(baseUrl .. urlPath)
+        local func = loadstring(source, "@" .. id)
+        setfenv(func, env)
+        modules[id] = func
     end)
     if not success then
-        warn("[VisualWave] Failed to load: " .. path .. "\nError: " .. tostring(result))
+        warn("Failed to load module:", id, result)
     end
-    return result
 end
 
--- Create folder structure in memory
-local visualWave = Instance.new("Folder")
-visualWave.Name = "VisualWave"
-visualWave.Parent = game.CoreGui
-
-local guiFolder = Instance.new("Folder")
-guiFolder.Name = "gui"
-guiFolder.Parent = visualWave
-
-local guiComponents = Instance.new("Folder")
-guiComponents.Name = "components"
-guiComponents.Parent = guiFolder
-
-local modulesFolder = Instance.new("Folder")
-modulesFolder.Name = "modules"
-modulesFolder.Parent = visualWave
-
-local utilsFolder = Instance.new("Folder")
-utilsFolder.Name = "utils"
-utilsFolder.Parent = visualWave
-
-local themesFolder = Instance.new("Folder")
-themesFolder.Name = "themes"
-themesFolder.Parent = visualWave
-
--- Load GUI components
-guiComponents.tabs = import("gui/components/tabs.lua")
-guiComponents.buttons = import("gui/components/buttons.lua")
-guiComponents.keybinds = import("gui/components/keybinds.lua")
-guiComponents.theme = import("gui/components/theme.lua")
-
--- Load GUI system
-guiFolder.init = import("gui/init.lua")
-
--- Load Modules
-modulesFolder["init"] = import("modules/init.lua")
-modulesFolder["combat"] = import("modules/combat.lua")
-modulesFolder["world"] = import("modules/world.lua")
-modulesFolder["render"] = import("modules/render.lua")
-modulesFolder["misc"] = import("modules/misc.lua")
-modulesFolder["handler"] = import("modules/handler.lua")
-
--- Load Utils
-utilsFolder["entity"] = import("utils/entity.lua")
-utilsFolder["input"] = import("utils/input.lua")
-utilsFolder["drawing"] = import("utils/drawing.lua")
-utilsFolder["settings"] = import("utils/settings.lua")
-
--- Load Themes
-themesFolder["default"] = import("themes/default.lua")
-themesFolder["vaporwave"] = import("themes/vaporwave.lua")
-themesFolder["dark"] = import("themes/dark.lua")
-
--- Start GUI
-local GuiService = guiFolder.init
-if GuiService and GuiService.Create then
-    GuiService:Create()
-else
-    warn("[VisualWave] GuiService failed to initialize")
-end
+-- Run GUI init and create it
+local guiService = env.require("gui/init")
+guiService:Create()
