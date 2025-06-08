@@ -2,7 +2,7 @@
 
 local Themes = {}
 
-local ThemeFolder = script.Parent.Parent.Parent.Parent:FindFirstChild("themes")
+local ThemeFolder = script.Parent.Parent.Parent:FindFirstChild("themes")
 -- FUTURE: May need to adjust path
 
 -- loading
