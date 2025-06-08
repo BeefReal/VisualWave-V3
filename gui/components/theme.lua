@@ -1,48 +1,15 @@
 -- gui/components/theme.lua
 
-local Themes = {}
+local Theme = {
+    BackgroundColor = Color3.fromRGB(20, 20, 20),
+    Frame = Color3.fromRGB(30, 30, 30),
+    BorderColor = Color3.fromRGB(50, 50, 50),
+    TextPrimary = Color3.fromRGB(255, 255, 255),
+    TextSecondary = Color3.fromRGB(180, 180, 180),
+    Accent = Color3.fromRGB(0, 120, 255),
+    ButtonActive = Color3.fromRGB(0, 120, 255),
+    ButtonInactive = Color3.fromRGB(40, 40, 40),
+    ScrollbarColor = Color3.fromRGB(60, 60, 60)
+}
 
-local ThemeFolder = script.Parent.Parent.Parent:FindFirstChild("themes")
--- FUTURE: May need to adjust path
-
--- loading
-for _, themeModule in ipairs(ThemeFolder:GetChildren()) do
-    if themeModule:IsA("ModuleScript") then
-        local name = themeModule.Name:lower()
-        Themes[name] = require(themeModule)
-    end
-end
-
-local currentTheme = Themes["default"] or {}
-
--- apply
-function Themes.applyTheme(guiElements, themeName)
-    local theme = Themes[themeName:lower()]
-    if not theme then
-        warn("Theme not found:", themeName)
-        return
-    end
-    currentTheme = theme
-
-    -- colors
-    if guiElements.MainFrame then
-        guiElements.MainFrame.BackgroundColor3 = theme.BackgroundColor
-    end
-    if guiElements.TitleLabel then
-        guiElements.TitleLabel.TextColor3 = theme.TextColor
-    end
-    if guiElements.TabButtons then
-        for _, button in pairs(guiElements.TabButtons) do
-            button.BackgroundColor3 = theme.ButtonColor
-            button.TextColor3 = theme.TextColor
-        end
-    end
-    if guiElements.ScrollFrames then
-        for _, scrollFrame in pairs(guiElements.ScrollFrames) do
-            scrollFrame.ScrollBarImageColor3 = theme.ScrollbarColor
-        end
-    end
-    -- element
-end
-
-return Themes
+return Theme
