@@ -1,4 +1,6 @@
-local Theme = require(script.Parent.theme)
+-- gui/components/buttons.lua
+
+local Theme = require("gui/components/theme")
 local UserInputService = game:GetService("UserInputService")
 
 local Buttons = {}
@@ -12,8 +14,8 @@ function Buttons.CreateToggle(parent, name, defaultKey, initialState, callback)
     local toggleBtn = Instance.new("TextButton")
     toggleBtn.Text = "▶ " .. name
     toggleBtn.Size = UDim2.new(0.65, -6, 1, 0)
-    toggleBtn.BackgroundColor3 = initialState and Theme.ButtonActive or Theme.ButtonInactive
-    toggleBtn.TextColor3 = Theme.TextPrimary
+    toggleBtn.BackgroundColor3 = initialState and (Theme.ButtonActive or Color3.fromRGB(85, 170, 255)) or (Theme.ButtonInactive or Color3.fromRGB(50, 50, 50))
+    toggleBtn.TextColor3 = Theme.TextPrimary or Color3.fromRGB(255, 255, 255)
     toggleBtn.Font = Enum.Font.GothamSemibold
     toggleBtn.TextSize = 14
     toggleBtn.BorderSizePixel = 0
@@ -25,8 +27,8 @@ function Buttons.CreateToggle(parent, name, defaultKey, initialState, callback)
     keybindBtn.Text = "Key: " .. defaultKey:upper()
     keybindBtn.Size = UDim2.new(0.35, 0, 1, 0)
     keybindBtn.Position = UDim2.new(0.65, 6, 0, 0)
-    keybindBtn.BackgroundColor3 = Theme.Frame
-    keybindBtn.TextColor3 = Theme.TextSecondary
+    keybindBtn.BackgroundColor3 = Theme.Frame or Color3.fromRGB(30, 30, 30)
+    keybindBtn.TextColor3 = Theme.TextSecondary or Color3.fromRGB(180, 180, 180)
     keybindBtn.Font = Enum.Font.Gotham
     keybindBtn.TextSize = 13
     keybindBtn.BorderSizePixel = 0
@@ -38,7 +40,7 @@ function Buttons.CreateToggle(parent, name, defaultKey, initialState, callback)
     local state = initialState
 
     local function updateVisual()
-        toggleBtn.BackgroundColor3 = state and Theme.ButtonActive or Theme.ButtonInactive
+        toggleBtn.BackgroundColor3 = state and (Theme.ButtonActive or Color3.fromRGB(85, 170, 255)) or (Theme.ButtonInactive or Color3.fromRGB(50, 50, 50))
     end
 
     local function toggle()
