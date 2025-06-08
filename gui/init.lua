@@ -1,9 +1,9 @@
 -- gui/init.lua
 
-local Tabs = require(script.components.tabs)
-local Buttons = require(script.components.buttons)
-local Theme = require(script.components.theme)
-local Keybinds = require(script.components.keybinds)
+local Tabs = require("gui/components/tabs")
+local Buttons = require("gui/components/buttons")
+local Theme = require("gui/components/theme")
+local Keybinds = require("gui/components/keybinds")
 
 local GuiService = {}
 
@@ -16,7 +16,7 @@ function GuiService:Create()
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0, 800, 0, 500)
     frame.Position = UDim2.new(0.5, -400, 0.5, -250)
-    frame.BackgroundColor3 = Theme.BackgroundColor
+    frame.BackgroundColor3 = Theme.BackgroundColor or Color3.fromRGB(30, 30, 30)
     frame.BorderSizePixel = 0
     frame.Active = true
     frame.Draggable = true
@@ -27,12 +27,12 @@ function GuiService:Create()
     corner.Parent = frame
 
     local stroke = Instance.new("UIStroke")
-    stroke.Color = Theme.BorderColor
+    stroke.Color = Theme.BorderColor or Color3.fromRGB(80, 80, 80)
     stroke.Thickness = 1.2
     stroke.Parent = frame
 
     -- Define your tab names
-    local tabNames = {"Exploit", "Settings", "Render", "World", "Misc"}
+    local tabNames = { "Exploit", "Settings", "Render", "World", "Misc" }
 
     -- Create container for tab content frames
     local contentContainer = Instance.new("Frame")
